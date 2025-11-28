@@ -1,0 +1,8 @@
+dash
+dash-mantine-components
+dash-ag-grid
+pandas
+plotly
+python-docx
+kaleido
+gunicorn
