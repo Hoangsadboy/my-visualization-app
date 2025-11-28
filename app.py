@@ -10,7 +10,7 @@ import plotly.express as px
 import base64, io
 from docx import Document
 
-# -------------------------
+# ------------------------- 
 # Load ISO (optional, used in choropleth)
 # -------------------------
 ISO_CSV = "https://raw.githubusercontent.com/lukes/ISO-3166-Countries-with-Regional-Codes/master/all/all.csv"
@@ -26,15 +26,14 @@ app = Dash(__name__, suppress_callback_exceptions=True)
 server = app.server
 
 # -------------------------
-# Helper: 73 labeled inputs
-# -------------------------
+# Helper: 75 labeled inputs------------------------------------------------
 LABELS = [
     "Scatter X", "Scatter Y", "Scatter Color", "Scatter Size", "Scatter Symbol", "Scatter Hover", "Scatter Template",
     "Line X", "Line Y", "Line Color", "Line Shape", "Line Hover", "Line Text", "Line Template",
     "Area X", "Area Y", "Area Color", "Area Animation Group", "Area Line Shape", "Area Opacity", "Area Template",
     "Heatmap X", "Heatmap Y", "Heatmap color_continuous_scale", "Heatmap Template",
     "Bar X", "Bar Y", "Bar Color", "Bar Mode", "Bar Orientation", "Bar Text", "Bar Template",
-    "Histogram X", "Histogram Y", "Histogram Color", "Histogram Opacity", "Histogram Barmode", "Histogram Template",
+    "Histogram X", "Histogram Y", "Histogram Color", "Histogram Opacity", "Histogram Barmode", "Histogram Template", "histfunc: ",
     "Box X", "Box Y", "Box Color", "Box Template",
     "Pie Names", "Pie Values", "Pie Hole (0-1)", "Pie Color", "Pie Title", "Pie Template",
     "Sunburst/Treemap Path (list)", "Sunburst/Treemap Values", "Sunburst/Treemap Color", "Sunburst/Treemap Title",
@@ -43,11 +42,7 @@ LABELS = [
     "Parallel Dimensions (list)", "Parallel Color", "Parallel Title",
     "Funnel X", "Funnel Y", "Funnel Color", "Funnel Orientation", "Funnel Text", "Funnel Template"
 ]
-
-# sanity: ensure length 73
-if len(LABELS) < 73:
-    LABELS += [f"q{i}" for i in range(len(LABELS), 73)]
-
+#--------------------------------------------------------------------------
 TOOLTIPS = [
     # 1-7 Scatter
     "Tên cột cho trục X của Scatter",
@@ -91,21 +86,22 @@ TOOLTIPS = [
     "Tên cột hiển thị text trên cột (text)",
     "Template cho Bar",
 
-    # 33-38 Histogram
+    # 33-39 Histogram
     "Tên cột X cho Histogram",
     "Tên cột Y cho Histogram (optional / agg)",
     "Tên cột để phân màu cho Histogram",
     "Opacity (0–1) cho Histogram",
     "Barmode cho histogram (group, stack, overlay)",
     "Template cho Histogram",
+    "histfunc: count, sum, avg, min, max",
 
-    # 39-42 Box/Violin
+    # 40-43 Box/Violin
     "Tên cột X cho Box/Violin (categorical)",
     "Tên cột Y cho Box/Violin (numeric)",
     "Tên cột để phân màu cho Box/Violin",
     "Template cho Box/Violin",
 
-    # 43-48 Pie
+    # 44-49 Pie
     "Tên cột chứa labels (names) cho Pie",
     "Tên cột chứa giá trị (values) cho Pie",
     "Hole (0–1) — độ rỗng giữa của Pie",
@@ -113,13 +109,13 @@ TOOLTIPS = [
     "Tiêu đề cho Pie chart",
     "Template cho Pie",
 
-    # 49-52 Sunburst/Treemap
+    # 50-53 Sunburst/Treemap
     "PATH cho Sunburst/Treemap — danh sách cột phân cấp (vd ['A','B'])",
     "Tên cột chứa giá trị (values) cho Sunburst/Treemap",
     "Tên cột dùng để tô màu cho Sunburst/Treemap (optional)",
     "Tiêu đề cho Sunburst/Treemap",
 
-    # 53-58 Choropleth
+    # 54-59 Choropleth
     "Tên cột numeric để làm color cho Choropleth",
     "chọn locations cho Choropleth",
     "Tên cột hiển thị khi hover (hover_name)",
@@ -127,7 +123,7 @@ TOOLTIPS = [
     "Chọn color_continuous_scale cho Choropleth",
     "Chiều cao chart (pixels) cho Choropleth (optional)",
 
-    # 59-65 Mapbox (scatter_mapbox)
+    # 60-66 Mapbox (scatter_mapbox)
     "Tên cột chứa vĩ độ (lat)",
     "Tên cột chứa kinh độ (lon)",
     "Tên cột dùng để tô màu trên bản đồ",
@@ -136,12 +132,12 @@ TOOLTIPS = [
     "Zoom ban đầu cho mapbox (ví dụ 2-12)",
     "Chiều cao chart (pixels) cho Mapbox",
 
-    # 66-68 Parallel coordinates
+    # 67-69 Parallel coordinates
     "Danh sách các cột numeric làm dimensions cho parallel coordinates",
     "Tên cột dùng để mã màu (color) trong parallel",
     "Tiêu đề cho parallel coordinates",
 
-    # 69-74 Funnel
+    # 70-75 Funnel
     "Tên cột X cho Funnel (giá trị trục x)",
     "Tên cột Y cho Funnel (nhãn trục y)",
     "Tên cột dùng để phân màu cho Funnel",
@@ -149,17 +145,12 @@ TOOLTIPS = [
     "Tên cột hiển thị text trên Funnel",
     "Template cho Funnel"
 ]
-
-# đảm bảo đủ 74 mục
-assert len(TOOLTIPS) == 74
-
-
-# Ensure length đủ 74
-if len(TOOLTIPS) < 74:
-    TOOLTIPS += [f"Tooltip {i}" for i in range(len(TOOLTIPS), 74)]
+assert len(TOOLTIPS) == 75
+#--------------------------------------------------------------------------
+# Ensure length đủ 75
 def generate_inputs():
     comps = []
-    for i in range(73):
+    for i in range(75):
         comps.append(
             dmc.Tooltip(
                 label=TOOLTIPS[i],     # tooltip riêng cho từng ô
@@ -177,9 +168,9 @@ def generate_inputs():
         )
     return comps
 
-# ------------------------- layout
+# ------------------------- len(LABELS)
 # Layout (UI improved)
-# -------------------------
+# trang trí -------------------------
 navbar_main = dmc.Paper(
     shadow="sm", p="md",
     style={"height": 64, "display": "flex", "alignItems": "center", "justifyContent": "space-between",
@@ -190,13 +181,17 @@ navbar_main = dmc.Paper(
         dmc.Group([dmc.Switch(id="theme-switch", size="md", offLabel="☀", onLabel="🌙")])
     ]
 )
-
+#---------------------------------------------------------------------
 subnav = dmc.Paper(
     shadow="xs", p="sm",
     style={"height": 56, "display": "flex", "alignItems": "center", "gap": 12,
            "position":"sticky","top":64,"zIndex":1000,"backgroundColor":"#ffffffcc","backdropFilter":"blur(4px)"},
     children=[
-        dmc.Button("Xử lý bảng dữ liệu", id="table", variant="gradient"),
+        html.A(
+            dmc.Button("Xử lý bảng dữ liệu", variant="gradient"),
+            href="https://chat.zalo.me/",
+            style={"textDecoration": "none"}
+            ),
         dmc.Button("Tạo biểu đồ", id="chart", variant="gradient"),
         dmc.Button("Liên kết biểu đồ", id="connect", variant="gradient"),
         dmc.Space(w=16),
@@ -210,16 +205,16 @@ content_box = dmc.Container(id="content", mt=140, children=[
     dmc.Title("Welcome", order=2),
     dmc.Text("Chọn chức năng ở thanh trên")
 ])
-
+#nội dung chính-------------------------------------------------------------------------------------
 app.layout = dmc.MantineProvider(children=[
     navbar_main, subnav, content_box,
     dcc.Store(id="stored-data"),
     dcc.Store(id="bg-store"),
 ])
-
+#----------------------------------------------------------------------
 # -------------------------
 # Content switch callback
-# -------------------------
+# 3 anh chàng-------------------------
 def chart_page():
     return dmc.Container([
         dmc.Title("Upload dữ liệu", order=3),
@@ -264,21 +259,13 @@ def chart_page():
         dmc.SimpleGrid(cols=4, spacing="md", children=generate_inputs()),
     ])
 
-def table_page():
-    return dmc.Container([
-        dmc.Title("Bảng dữ liệu", order=3),
-        dag.AgGrid(id='AgGrid', rowData=[], columnDefs=[], style={"height":"640px","width":"100%"})
-    ])
-
 def connect_page():
     return dmc.Container([dmc.Title("Liên kết dữ liệu"), dmc.Text("Tính năng sẽ mở rộng")])
-
+#chọn 1 trong 3 để mời lên layout đứng
 @app.callback(Output("content", "children"),
-              Input("table","n_clicks"), Input("chart","n_clicks"), Input("connect","n_clicks"))
-def switch_page(b1, b2, b3):
+              Input("chart","n_clicks"), Input("connect","n_clicks"))
+def switch_page(b1, b2):
     trig = ctx.triggered_id
-    if trig == "table":
-        return table_page()
     if trig == "chart":
         return chart_page()
     if trig == "connect":
@@ -287,7 +274,7 @@ def switch_page(b1, b2, b3):
 
 # -------------------------
 # File parsing & convert numeric
-# -------------------------
+# bộ 3 chuyển đổi số ---------------------------------------------------------------
 def parse_docx(bytestr: bytes):
     doc = Document(io.BytesIO(bytestr))
     rows = []
@@ -324,9 +311,9 @@ def convert_numeric(df):
             df[col] = temp
     return df
 
-# -------------------------
+# ------------------------------------------------------------------------------------
 # Store uploaded data -> write to AgGrid once (no duplicate issues)
-# -------------------------
+# cập nhât dữ liệu lên bảng-------------------------
 @app.callback(
     Output("stored-data", "data"),
     Output("AgGrid", "rowData"),
@@ -375,9 +362,9 @@ def apply_bg(bg):
     return style
 
 # ------------------------- def generate_inputs():
-# Update graph — keep original algorithm, accept q0..q72
+# Update graph — keep original algorithm, accept q0..q75
 # -------------------------
-q_inputs = [Input(f"q{i}", "value") for i in range(73)]
+q_inputs = [Input(f"q{i}", "value") for i in range(75)]
 @app.callback(Output("controls-and-graph","figure"),
               Input("first","value"),
               Input("stored-data","data"),
@@ -385,7 +372,7 @@ q_inputs = [Input(f"q{i}", "value") for i in range(73)]
 def update_graph(chart_type, uploaded_data, *values):
     df_used = pd.DataFrame(uploaded_data) if uploaded_data else pd.DataFrame()
     values = [v if v not in ["", None] else None for v in values]
-    check = values[53]
+    check = values[54]
     if check in df_used.columns:
         try:
             df_used = df_used.merge(iso_df_used[['name','alpha-3']], left_on=check, right_on='name', how='left')
@@ -403,7 +390,6 @@ def update_graph(chart_type, uploaded_data, *values):
             df_used[v] = pd.to_numeric(df_used[v].astype(str).str.replace(r'[^\d\.\-]', '', regex=True), errors='coerce')
 
     try:
-        print(df_used.columns)
         chart_funct = {
             'scatter': lambda:
                 px.scatter(df_used, x=values[0], y=values[1], color=values[2],
@@ -428,46 +414,49 @@ def update_graph(chart_type, uploaded_data, *values):
 
             'histogram': lambda:
                 px.histogram(df_used, x=values[32], y=values[33], color=values[34],
-                             opacity=float(values[35]) if values[35] else 1, barmode=values[36], template=values[37]),
+                             opacity=float(values[35]) if values[35] else 1, barmode=values[36], template=values[37],
+                             histfunc = values[38]),
 
             'box': lambda:
-                px.box(df_used, x=values[38], y=values[39], color=values[40], template=values[41]),
+                px.box(df_used, x=values[39], y=values[40], color=values[41], template=values[42],
+                        hover_data=list(df_used.columns), points='all'),
 
             'violin': lambda:
-                px.violin(df_used, x=values[38], y=values[39], color=values[40], template=values[41]),
+                px.violin(df_used, x=values[39], y=values[40], color=values[41], template=values[42],
+                        hover_data=list(df_used.columns), points='all'),
 
             'pie': lambda:
-                px.pie(df_used, names=values[42], values=values[43], hole=float(values[44]) if values[44] else 0,
-                       color=values[45], title=values[46], template=values[47]),
+                px.pie(df_used, names=values[43], values=values[44], hole=float(values[45]) if values[45] else 0,
+                       color=values[46], title=values[47], template=values[48]),
 
             'sunburst': lambda:
-                px.sunburst(df_used, path=values[48], values=values[49], color=values[50], title=values[51]),
+                px.sunburst(df_used, path=values[49], values=values[50], color=values[51], title=values[52]),
 
             'treemap': lambda:
-                px.treemap(df_used, path=values[48], values=values[49], color=values[50], title=values[51]),
+                px.treemap(df_used, path=values[49], values=values[50], color=values[51], title=values[52]),
 
             'choropleth': lambda:
-                px.choropleth(df_used, locations='iso_alpha' if 'iso_alpha' in df_used.columns else 'alpha-3', locationmode='ISO-3', color=values[52],
-                              hover_name=values[54], title=values[55], color_continuous_scale=values[56],
-                              height=int(float(values[57])) if values[57] else 600),
+                px.choropleth(df_used, locations='iso_alpha' if 'iso_alpha' in df_used.columns else 'alpha-3', locationmode='ISO-3', color=values[53],
+                              hover_name=values[55], title=values[56], color_continuous_scale=values[57],
+                              height=int(float(values[58])) if values[58] else 600),
 
             'scatter_mapbox': lambda:
                 (px.scatter_mapbox(
                     df_used,
-                    lat=(values[58] if isinstance(values[58], str) and values[58] in df_used.columns else None),
-                    lon=(values[59] if isinstance(values[59], str) and values[59] in df_used.columns else None),
-                    color=values[60], hover_name=values[61],
-                    size=(values[62] if isinstance(values[62], str) and values[62] in df_used.columns else None),
-                    zoom=float(values[63]) if values[63] else 4,
-                    height=int(float(values[64])) if values[64] else 600,
+                    lat=(values[59] if isinstance(values[59], str) and values[59] in df_used.columns else None),
+                    lon=(values[60] if isinstance(values[60], str) and values[60] in df_used.columns else None),
+                    color=values[61], hover_name=values[62],
+                    size=(values[63] if isinstance(values[63], str) and values[63] in df_used.columns else None),
+                    zoom=float(values[64]) if values[64] else 4,
+                    height=int(float(values[65])) if values[65] else 600,
                     size_max=25).update_layout(mapbox_style="open-street-map")
                 ),
 
             'parallel_coordinates': lambda:
-                px.parallel_coordinates(df_used, dimensions=values[65], color=values[66], title=values[67]),
+                px.parallel_coordinates(df_used, dimensions=values[66], color=values[67], title=values[68]),
 
             'funnel': lambda:
-                px.funnel(df_used, x=values[68], y=values[69], color=values[70], orientation=values[71], text=values[72], template=values[73])
+                px.funnel(df_used, x=values[69], y=values[70], color=values[71], orientation=values[72], text=values[73], template=values[74])
         }
 
         return chart_funct.get(chart_type, lambda: px.scatter(df_used, x=df_used.columns[0]))()
@@ -504,6 +493,7 @@ def update_graph(chart_type, uploaded_data, *values):
 
         return fig
 
+
 @app.callback(
     Output("download-svg", "data"),
     Input("btn-svg", "n_clicks"),
@@ -530,7 +520,7 @@ def download_svg(n, fig):
         type="text/svg"
     )
 
-# ------------------------- merge
+# ------------------------- px.violin
 # Run
 # ------------------------- height
 if __name__ == "__main__":
