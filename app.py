@@ -472,7 +472,37 @@ def update_graph(chart_type, uploaded_data, *values):
 
         return chart_funct.get(chart_type, lambda: px.scatter(df_used, x=df_used.columns[0]))()
     except Exception as e:
-        return px.scatter(title=f"⚠️ Lỗi khi vẽ biểu đồ: {e}")
+        # Chuyển lỗi thành chuỗi và ép xuống dòng mỗi khi quá dài
+        msg = f"⚠️ Lỗi khi vẽ biểu đồ:<br>{str(e).replace(', ', ',<br>')}"
+
+        fig = px.scatter()  # biểu đồ rỗng để hiển thị lỗi
+
+        # === Annotation để hiển thị lỗi xuống dòng cực đẹp ===
+        fig.add_annotation(
+            x=0,
+            y=1.15,
+            xref="paper",
+            yref="paper",
+            align="left",
+            showarrow=False,
+            text=f"""
+                <span style="white-space:normal;
+                             font-size:16px;
+                             color:#d9534f;
+                             font-weight:bold;
+                             display:block;
+                             width:900px;">
+                    {msg}
+                </span>
+            """
+        )
+
+        # Chừa không gian phía trên cho lỗi dài
+        fig.update_layout(
+            margin=dict(t=180)  # tăng top margin để lỗi không đè lên chart
+        )
+
+        return fig
 
 @app.callback(
     Output("download-svg", "data"),
