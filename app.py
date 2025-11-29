@@ -43,12 +43,12 @@ subnav = dmc.Paper(
     children=[
         html.A(
             dmc.Button("Code biểu đồ", variant="gradient"),
-            href="/",
+            href="https://code-for-charts.onrender.com",
             style={"textDecoration": "none"}
             ),
         html.A(
             dmc.Button("Tạo biểu đồ", variant="gradient"),
-            href="/",
+            href="https://easy-create-chart.onrender.com",
             style={"textDecoration": "none"}
             ),
         dmc.Space(w=16),
