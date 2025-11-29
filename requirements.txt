@@ -1,7 +1,9 @@
 dash
-dash-mantine-components
 dash-ag-grid
+dash-mantine-components
 pandas
 plotly
+openpyxl
 python-docx
+kaleido
 gunicorn
