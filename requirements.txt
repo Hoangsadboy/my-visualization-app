@@ -4,3 +4,4 @@ dash-ag-grid
 pandas
 plotly
 python-docx
+gunicorn
