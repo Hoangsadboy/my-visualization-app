@@ -7,3 +7,9 @@ openpyxl
 python-docx
 kaleido
 gunicorn
+numpy
+seaborn
+matplotlib
+altair
+bokeh
+networkx
